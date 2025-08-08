@@ -1,6 +1,8 @@
 kindle_reviews.csv
 kindle_reviews.json
 *.png
+*.csv
+*.pth
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
