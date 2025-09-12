@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[15]:
+# In[35]:
 
 
 import os
@@ -20,22 +20,22 @@ default_debug = False
 #    return {"text": response.output_text, "id": response.id, "model": model, "service_tier": service_tier, "usage": response.usage}
 
 
-# In[16]:
+# In[36]:
 
 
 # -------------------------------------------------------
 rate_limit_timeout = 0  # When the rate limit will expire
 
 def get_global_settings_string(): 
-     if not os.environ.get("OPENAI_API"):
-          raise ValueError("OPENAI_API environment variable is not set. Please set it to your API key.")
+     if not os.environ.get("OPENAI_API_KEY"):
+          raise ValueError("OPENAI_API_KEY environment variable is not set. Please set it to your API key.")
      return f"{default_model} {minimum_tokens}tk {rate_limit_seconds}s { 'debug' if default_debug else '' }"
 
 def divider(): 
     print("-" * 50)
 
 
-# In[17]:
+# In[37]:
 
 
 import math
@@ -60,7 +60,7 @@ def display_cost_human(cost): # GenAI
         return f"1/{denominator:,}¢"
 
 
-# In[18]:
+# In[38]:
 
 
 def cost_of_openai_api_call(model, input_tokens, output_tokens, flex=False):
@@ -90,7 +90,7 @@ def cost_of_openai_api_call(model, input_tokens, output_tokens, flex=False):
     return display_cost_human(cost)
 
 
-# In[19]:
+# In[39]:
 
 
 def cost_of_responses_api(response_dict):
@@ -103,7 +103,7 @@ def cost_of_responses_api(response_dict):
     )
 
 
-# In[20]:
+# In[40]:
 
 
 def cost_of_completions_api(response_dict):
@@ -112,15 +112,15 @@ def cost_of_completions_api(response_dict):
     service_tier = response_dict.service_tier
     return (
         f"Usage: {response_dict.usage.prompt_tokens} + {response_dict.usage.completion_tokens} = {response_dict.usage.total_tokens}\t"
-        + cost_of_openai_api_call(model, response_dict.usage.prompt_tokens, response_dict.usage.completion_tokens, service_tier)
+        + cost_of_OPENAI_API_KEY_call(model, response_dict.usage.prompt_tokens, response_dict.usage.completion_tokens, service_tier)
     )
 
 
-# In[ ]:
+# In[41]:
 
 
-if not os.environ.get("OPENAI_API"):
-    raise ValueError("OPENAI_API environment variable is not set. Please set it to your API key.")
+if not os.environ.get("OPENAI_API_KEY"):
+    raise ValueError("OPENAI_API_KEY environment variable is not set. Please set it to your API key.")
 
 # -------------------------------------------------
 # Function to generate a response 
@@ -193,7 +193,7 @@ def generate_response(prompt, model=None, temperature=None, max_tokens=None, top
     rate_limit_timeout = time.time() + rate_limit_seconds
 
 
-    client = OpenAI(api_key=os.environ["OPENAI_API"],
+    client = OpenAI(api_key=os.environ["OPENAI_API_KEY"],
                     )
 
     try:
@@ -247,4 +247,13 @@ def generate_response(prompt, model=None, temperature=None, max_tokens=None, top
         return {"text": response.output_text, "id": response.id, "model": model, "service_tier": service_tier, "usage": response.usage}
 
 # /------------------------------------------------
+
+
+# In[ ]:
+
+
+if False:                        # True or False to TEST
+    test_prompt = "Hello."
+    response = generate_response(test_prompt, verbose=True)
+    print(f"Prompt: {test_prompt}\nResponse: {response}\n")
 
